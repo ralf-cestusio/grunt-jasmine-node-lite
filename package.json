@@ -30,7 +30,6 @@
   "devDependencies": {
     "grunt-contrib-jshint": "~0.4.0",
     "grunt-contrib-clean": "~0.4.0",
-    "grunt-contrib-nodeunit": "~0.1.2",
     "grunt": "~0.4.1"
   },
   "peerDependencies": {
@@ -40,5 +39,8 @@
     "gruntplugin",
     "jasmine-node-lite",
     "unittests"
-  ]
+  ],
+  "dependencies": {
+    "jasmine-node-lite": "0.0.1"
+  }
 }

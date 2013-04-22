@@ -13,38 +13,30 @@ module.exports = function(grunt) {
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
 
-    grunt.registerMultiTask('jasmine_node_lite', 'Your task description goes here.', function() {
+    grunt.registerMultiTask('jasmine_node_lite', 'runs jasmine-node-lite', function() {
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({
-            punctuation: '.',
-            separator: ', '
+            consoleReporter: false,
+            showStackTrace: false
         });
 
-        // Iterate over all specified file groups.
-        this.files.forEach(function(f) {
-            // Concat specified files.
-            var src = f.src.filter(function(filepath) {
-                // Warn on and remove invalid source files (if nonull was set).
-                if (!grunt.file.exists(filepath)) {
-                    grunt.log.warn('Source file "' + filepath + '" not found.');
-                    return false;
-                } else {
-                    return true;
-                }
-            }).map(function(filepath) {
-                // Read file source.
-                return grunt.file.read(filepath);
-            }).join(grunt.util.normalizelf(options.separator));
+        // Tell grunt this task is asynchronous.
+        var done = this.async();
 
-            // Handle options.
-            src += options.punctuation;
+        // call jasmine-node-lite
+        var jasmineNodeLite = require('jasmine-node-lite');
 
-            // Write the destination file.
-            grunt.file.write(f.dest, src);
+        function onDone() {
+            done();
+        }
+        var jasmineNodeLiteOptions = {
+            genericReporter: jasmineNodeLite.GenericJasmineReporter,
+            includeStackTrace: false
+        };
 
-            // Print a success message.
-            grunt.log.writeln('File "' + f.dest + '" created.');
-        });
+        var reporter = new jasmineNodeLite.ConsoleReporter(jasmineNodeLiteOptions);
+
+        jasmineNodeLite.executeSpecs(this.filesSrc, onDone);
     });
 
 };
