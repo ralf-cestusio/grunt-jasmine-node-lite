@@ -30,9 +30,9 @@ module.exports = (grunt) ->
           all:
             options:
               consoleReporter: true,
-              showStackTrace: false
+              stackTrace: false,
+              specs: ['spec/**/*.js']
 
-            src: ['spec/**/*.js']
       
 
     # Modules

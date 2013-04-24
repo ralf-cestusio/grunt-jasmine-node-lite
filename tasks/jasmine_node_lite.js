@@ -17,26 +17,38 @@ module.exports = function(grunt) {
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({
             consoleReporter: false,
-            showStackTrace: false
+            stackTrace: false,
+            specs: []
         });
-
+        var specFiles = [];
+        //resolve specs glob 
+        options.specs.forEach(function(specItem) {
+            if (specItem) {
+                specFiles = specFiles.concat(grunt.file.expand({
+                    nonull: true
+                }, specItem));
+            }
+        });
+        options.specs = specFiles;
         // Tell grunt this task is asynchronous.
         var done = this.async();
 
         // call jasmine-node-lite
         var jasmineNodeLite = require('jasmine-node-lite');
 
-        function onDone() {
+        function onComplete() {
             done();
         }
-        var jasmineNodeLiteOptions = {
-            genericReporter: jasmineNodeLite.GenericJasmineReporter,
-            includeStackTrace: false
-        };
+        if (options.consoleReporter === true) {
+            var consoleReporterOptions = {
+                stackTrace: options.stackTrace,
+                onComplete: onComplete
+            };
+            var consoleReporter = new jasmineNodeLite.ConsoleReporter(consoleReporterOptions);
+            jasmineNodeLite.registerReporter(consoleReporter);
+        }
 
-        var reporter = new jasmineNodeLite.ConsoleReporter(jasmineNodeLiteOptions);
-
-        jasmineNodeLite.executeSpecs(this.filesSrc, onDone);
+        jasmineNodeLite.executeSpecs(options.specs);
     });
 
 };

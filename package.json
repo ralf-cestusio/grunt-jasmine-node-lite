@@ -41,6 +41,6 @@
     "unittests"
   ],
   "dependencies": {
-    "jasmine-node-lite": "0.0.1"
+    "jasmine-node-lite": "~0.0.2"
   }
 }
