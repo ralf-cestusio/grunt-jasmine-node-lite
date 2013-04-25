@@ -12,31 +12,50 @@ module.exports = function(grunt) {
 
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
+    var CONSOLEREPORTEROPTIONS = {
+        enabled: false,
+        stackTrace: false
+    };
+
+    var JASMINEOPTIONS = {
+        specs: []
+    };
 
     grunt.registerMultiTask('jasmine_node_lite', 'runs jasmine-node-lite', function() {
         // Merge task-specific and/or target-specific options with these defaults.
-        var options = this.options({
-            consoleReporter: false,
-            showStackTrace: false
-        });
 
+        var options = this.options({
+            consoleReporter: CONSOLEREPORTEROPTIONS,
+            jasmine: JASMINEOPTIONS
+        });
+        var specFiles = [];
+        //resolve specs glob 
+        options.jasmine.specs.forEach(function(specItem) {
+            if (specItem) {
+                specFiles = specFiles.concat(grunt.file.expand({
+                    nonull: true
+                }, specItem));
+            }
+        });
+        options.jasmine.specs = specFiles;
+        
         // Tell grunt this task is asynchronous.
         var done = this.async();
 
         // call jasmine-node-lite
         var jasmineNodeLite = require('jasmine-node-lite');
 
-        function onDone() {
+        function onConsoleReporterDone() {
+            console.log('ConsoleReporter done');
             done();
         }
-        var jasmineNodeLiteOptions = {
-            genericReporter: jasmineNodeLite.GenericJasmineReporter,
-            includeStackTrace: false
-        };
+        if (options.consoleReporter.enabled === true) {
+            options.consoleReporter.onComplete = onConsoleReporterDone;
+            var consoleReporter = new jasmineNodeLite.ConsoleReporter(options.consoleReporter);
+            jasmineNodeLite.registerReporter(consoleReporter);
+        }
 
-        var reporter = new jasmineNodeLite.ConsoleReporter(jasmineNodeLiteOptions);
-
-        jasmineNodeLite.executeSpecs(this.filesSrc, onDone);
+        jasmineNodeLite.executeSpecs(options.jasmine);
     });
 
 };
