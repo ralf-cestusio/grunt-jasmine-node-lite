@@ -38,7 +38,7 @@ module.exports = function(grunt) {
             }
         });
         options.jasmine.specs = specFiles;
-        
+
         // Tell grunt this task is asynchronous.
         var done = this.async();
 
