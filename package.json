@@ -1,7 +1,7 @@
 {
   "name": "grunt-jasmine-node-lite",
   "description": "Grunt task for jasmine-node-lite",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/magicmoose/grunt-jasmine-node-lite",
   "author": {
     "name": "Ralf Mueller",
@@ -41,6 +41,6 @@
     "unittests"
   ],
   "dependencies": {
-    "jasmine-node-lite": "0.0.1"
+    "jasmine-node-lite": "~0.0.3"
   }
 }

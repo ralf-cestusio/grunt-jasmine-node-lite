@@ -29,10 +29,12 @@ module.exports = (grunt) ->
         jasmine_node_lite:
           all:
             options:
-              consoleReporter: true,
-              showStackTrace: false
+              consoleReporter: 
+                enabled: true, 
+                stackTrace: false
+              jasmine:
+                specs: ['spec/**/*.js']
 
-            src: ['spec/**/*.js']
       
 
     # Modules
