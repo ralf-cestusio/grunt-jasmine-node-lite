@@ -27,13 +27,27 @@ module.exports = (grunt) ->
             jshintrc: '.jshintrc'
 
         jasmine_node_lite:
+          options:
+              consoleReporter: 
+                enabled: true, 
+                stackTrace: false,
+                verbose: true
+              jasmine:
+                specs: ['spec/**/*.js']
+          ci:
+            options:
+              consoleReporter: 
+                enabled: true,
+                color: false, 
+                stackTrace: true,
+                verbose: true
           all:
             options:
               consoleReporter: 
                 enabled: true, 
-                stackTrace: false
-              jasmine:
-                specs: ['spec/**/*.js']
+                stackTrace: false,
+                verbose: false
+            
 
       
 

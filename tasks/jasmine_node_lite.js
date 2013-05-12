@@ -14,7 +14,8 @@ module.exports = function(grunt) {
     // creation: http://gruntjs.com/creating-tasks
     var CONSOLEREPORTEROPTIONS = {
         enabled: false,
-        stackTrace: false
+        stackTrace: false,
+        verbose: false
     };
 
     var JASMINEOPTIONS = {
@@ -30,13 +31,7 @@ module.exports = function(grunt) {
         });
         var specFiles = [];
         //resolve specs glob 
-        options.jasmine.specs.forEach(function(specItem) {
-            if (specItem) {
-                specFiles = specFiles.concat(grunt.file.expand({
-                    nonull: true
-                }, specItem));
-            }
-        });
+        specFiles = grunt.file.expand(options.jasmine.specs);
         options.jasmine.specs = specFiles;
 
         // Tell grunt this task is asynchronous.
@@ -45,9 +40,9 @@ module.exports = function(grunt) {
         // call jasmine-node-lite
         var jasmineNodeLite = require('jasmine-node-lite');
 
-        function onConsoleReporterDone() {
-            console.log('ConsoleReporter done');
-            done();
+        function onConsoleReporterDone(result) {
+            jasmineNodeLite.unregisterReporter(consoleReporter);
+            done(result.failureCount === 0);
         }
         if (options.consoleReporter.enabled === true) {
             options.consoleReporter.onComplete = onConsoleReporterDone;
