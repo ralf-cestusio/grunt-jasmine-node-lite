@@ -32,6 +32,9 @@ module.exports = (grunt) ->
                 enabled: true, 
                 stackTrace: false,
                 verbose: true
+              junitReporter:
+                enabled: true
+                savePath: './reports'
               jasmine:
                 specs: ['spec/**/*.js']
           ci:
@@ -41,13 +44,15 @@ module.exports = (grunt) ->
                 color: false, 
                 stackTrace: true,
                 verbose: true
-          all:
+                
+          dev:
             options:
               consoleReporter: 
                 enabled: true, 
                 stackTrace: false,
                 verbose: false
-            
+              junitReporter:
+                enabled: false
 
       
 
@@ -59,4 +64,5 @@ module.exports = (grunt) ->
     
     #Tasks
     grunt.registerTask('default', ['jshint', 'test']);
-    grunt.registerTask('test', ['jasmine_node_lite']);
+    grunt.registerTask('test', ['jasmine_node_lite:dev']);
+    grunt.registerTask('ci', ['jshint', 'jasmine_node_lite:ci']);
