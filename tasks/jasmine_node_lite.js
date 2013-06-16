@@ -19,6 +19,8 @@ module.exports = function(grunt) {
     };
 
     var JASMINEOPTIONS = {
+        enabled: false,
+        savePath: './reports',
         specs: []
     };
 
@@ -30,6 +32,7 @@ module.exports = function(grunt) {
             jasmine: JASMINEOPTIONS
         });
         var specFiles = [];
+        var reporters = [];
         //resolve specs glob 
         specFiles = grunt.file.expand(options.jasmine.specs);
         options.jasmine.specs = specFiles;
@@ -40,14 +43,38 @@ module.exports = function(grunt) {
         // call jasmine-node-lite
         var jasmineNodeLite = require('jasmine-node-lite');
 
-        function onConsoleReporterDone(result) {
-            jasmineNodeLite.unregisterReporter(consoleReporter);
-            done(result.failureCount === 0);
+        var numberOfReportersToWaitFor = 0;
+
+        function unregisterReporters() {
+            for (var i = 0; i < reporters.length; i++) {
+                jasmineNodeLite.unregisterReporter(reporters[i]);
+            }
         }
+
+        function onReporterDone(result) {
+            numberOfReportersToWaitFor = numberOfReportersToWaitFor - 1;
+            if (numberOfReportersToWaitFor === 0) {
+                unregisterReporters();
+                done(result.failureCount === 0);
+            }
+        }
+
+        function registerReporter(reporter) {
+            numberOfReportersToWaitFor = numberOfReportersToWaitFor + 1;
+            jasmineNodeLite.registerReporter(reporter);
+            reporters.push(reporter);
+        }
+
         if (options.consoleReporter.enabled === true) {
-            options.consoleReporter.onComplete = onConsoleReporterDone;
+            options.consoleReporter.onComplete = onReporterDone;
             var consoleReporter = new jasmineNodeLite.ConsoleReporter(options.consoleReporter);
-            jasmineNodeLite.registerReporter(consoleReporter);
+            registerReporter(consoleReporter);
+        }
+
+        if (options.junitReporter.enabled === true) {
+            options.junitReporter.onComplete = onReporterDone;
+            var junitReporter = new jasmineNodeLite.JUnitReporter(options.junitReporter);
+            registerReporter(junitReporter);
         }
 
         jasmineNodeLite.executeSpecs(options.jasmine);
